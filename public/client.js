@@ -9,19 +9,15 @@ signupForm.addEventListener('submit', async (e) => {
   const username = document.getElementById('signupUsername').value;
   const password = document.getElementById('signupPassword').value;
 
-  // POSTリクエスト
   const res = await fetch('/api/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username, password }),
+    credentials: 'include'
   });
 
-  if (res.ok) {
-    const data = await res.json();
-    result.textContent = data.message;
-  } else {
-    result.textContent = res.status + ' ' + res.statusText;
-  }
+  const data = await res.json();
+  result.textContent = data.message;
 });
 
 /*** ログイン ***/
@@ -31,11 +27,11 @@ loginForm.addEventListener('submit', async (e) => {
   const username = document.getElementById('loginUsername').value;
   const password = document.getElementById('loginPassword').value;
 
-  // POSTリクエスト
   const res = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username, password }),
+    credentials: 'include'
   });
 
   const data = await res.json();
@@ -44,11 +40,11 @@ loginForm.addEventListener('submit', async (e) => {
 
 /*** プロフィールの取得 ***/
 const getProfileButton = document.getElementById('getProfileButton');
-getProfileButton.addEventListener('click', async (e) => {
-  e.preventDefault();
-
-  // GETリクエスト
-  const res = await fetch('/api/profile');
+getProfileButton.addEventListener('click', async () => {
+  const res = await fetch('/api/profile', {
+    method: 'GET',
+    credentials: 'include'
+  });
 
   if (res.ok) {
     const data = await res.json();
@@ -60,16 +56,15 @@ getProfileButton.addEventListener('click', async (e) => {
 
 /*** ログアウト ***/
 const logoutButton = document.getElementById('logoutButton');
-logoutButton.addEventListener('click', async (e) => {
-  e.preventDefault();
+logoutButton.addEventListener('click', async () => {
+  const res = await fetch('/api/logout', {
+    method: 'POST',
+    credentials: 'include'
+  });
 
-  // POSTリスエスト（ボディなし）
-  const res = await fetch('/api/logout', { method: 'POST' });
-
-  if (res.ok) {
+  if (res.ok || res.status === 204) {
     result.textContent = 'ログアウトしました';
-    loginUser.textContent = '';
   } else {
-    result.textContent = 'ログインしていません'
+    result.textContent = 'ログインしていません';
   }
 });
